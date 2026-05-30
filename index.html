@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>？下一顿吃什么 ¿</title>
+    <style>
+         /* 全局清除默认边距 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;     /* 占满视口高度 */
+            display: flex;          /* 弹性布局 */
+            justify-content: center;/* 水平居中 */
+            align-items: center;    /* 垂直居中 */
+            /* 纯色背景 */
+            background: #fff;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* 包裹层：标题 + 转盘，整体居中 */
+        .wrap {
+            text-align: center;     /* 内部文字居中 */
+            position: relative;
+        }
+
+        /* 转盘名字（标题）样式 */
+        .wheel-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;   /* 和转盘拉开距离 */
+            font-weight: bold;
+        }
+        /* 转盘上方倒置红色指针 */
+        .pointer {
+            position: absolute;
+            /* 水平居中 */
+            left: 50%;
+            transform: translateX(-50%);
+            /* 位置：贴在转盘顶部 */
+            top: 48px;
+            /* 画倒置三角形 */
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            /* 倒置：用顶部边框做三角，红色 */
+            border-top: 28px solid #e63946;
+            /* 层级高于转盘，防止被遮挡 */
+            z-index: 10;
+        }
+        /* 转盘（圆形） */
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;     /* 变圆 */
+            background: conic-gradient(
+                #ff9a9e 0deg 60deg,
+                #a1c4fd 60deg 120deg,
+                #ffecd2 120deg 180deg,
+                #ff9a9e 180deg 240deg,
+                #a1c4fd 240deg 300deg,
+                #ffecd2 300deg 360deg
+            );
+            border: 6px solid #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            transform-origin: center;
+            backface-visibility: hidden;
+            will-change: transform;
+            position: relative;
+        }
+        .wheel > div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+        .text1, .text2, .text3, .text4, .text5, .text6 {
+            line-height: 80px;
+            color: #222;
+        }
+        .text1 { transform: rotate(30deg); }
+        .text2 { transform: rotate(90deg); }
+        .text3 { transform: rotate(150deg); }
+        .text4 { transform: rotate(210deg); }
+        .text5 { transform: rotate(270deg); }
+        .text6 { transform: rotate(330deg); }
+        /* 让转盘旋转的动画 */
+        @keyframes randomRotate {
+            to {
+                transform: rotate(var(--rotate-degree));
+            }
+        }
+        /* 旋转类：点击才会生效 */
+        .rotating {
+            animation: none;
+            animation: randomRotate 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        /* 按钮样式 */
+        #spinBtn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        /* 按钮反馈 */
+        #spinBtn:hover {
+            background: #ffe6e6;
+            transform: scale(1.08);
+        }
+        #spinBtn:active {
+            transform: scale(0.9);
+            background: #f8d1d1;
+        }
+        /* 自定义弹窗样式 */
+        .my-modal {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5); /* 半透明黑遮罩 */
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .my-modal-box {
+            background: #fff;
+            width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+        .my-modal-title {
+            background: #e63946;
+            font-weight: bold;
+            padding: 10px;
+            font-size: 18px;
+            /* 标准金色文字 + 发光效果 */
+            color: #FFD700;
+            text-shadow: 0 0 1px #fff, 0 0 2px #FFD700;
+        }
+        .my-modal-content {
+            padding: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .my-modal-btn {
+            text-align: center;
+            padding: 10px;
+        }
+        .my-modal-btn button {
+            padding: 6px 15px;
+            border: none;
+            border-radius: 5px;
+            background: #e63946;
+            color: #fff;
+            cursor: pointer;
+        }
+        /* 问号旋转动画 */
+        .rotate-q {
+            display: inline-block;
+            animation: rotateQ 2s linear infinite;
+        }
+        @keyframes rotateQ {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* 🔥 公师 超级无敌炸裂炫酷特效 */
+        .super-cool {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff0080, #ff8c00, #ffff00, #00ff80, #00bfff, #8a2be2, #ff0080);
+            background-size: 600% 600%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: coolShine 3s linear infinite,
+                coolShake 0.8s ease-in-out infinite alternate,
+                coolGlow 2s ease-in-out infinite alternate;
+            display: inline-block;
+            text-shadow: 0 0 10px currentColor;
+            cursor: pointer;
+            /* 离开时平滑恢复 */
+            transition: transform 0.4s ease-out;
+            transform-origin: center;
+        }
+        /* 鼠标悬停：先转3圈，再放大 */
+        .super-cool:hover {
+            animation: spin3ThenScale 1.2s ease-out forwards,
+                coolShine 1s linear infinite,
+                coolGlow 2s ease-in-out infinite alternate;
+        }
+        /* 关键动画：3圈 + 放大 */
+        @keyframes spin3ThenScale {
+            0%   { transform: rotate(0deg) scale(1); }
+            80%  { transform: rotate(1080deg) scale(1); } /* 3圈=1080° */
+            100% { transform: rotate(1080deg) scale(1.3); } /* 最后放大 */
+        }
+        /* 下面三个是原来的发光/变色/抖动，保留不动 */
+        @keyframes coolShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        @keyframes coolShake {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-3px); }
+        }
+        @keyframes coolGlow {
+            0% { filter: brightness(1); text-shadow: 0 0 10px currentColor; }
+            100% { filter: brightness(1.5); text-shadow: 0 0 20px currentColor, 0 0 30px #fff; }
+        }
+        /* 内测版本文字 */
+        .version {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 包裹层：标题 + 转盘 -->
+    <div class="wrap">
+        <!-- 转盘名字 -->
+        <div class="wheel-title">
+            <span class="rotate-q">？</span>
+            下一顿吃什么
+            <span class="rotate-q">¿</span>
+        </div>
+        <!-- 新增：倒置红色指针 -->
+        <div class="pointer"></div>
+        <!-- 转盘 + 文字 -->
+        <div class="wheel">
+            <div class="text1">翰苑</div>
+            <div class="text2">博苑</div>
+            <div class="text3">后街</div>
+            <div class="text4">翰苑</div>
+            <div class="text5">博苑</div>
+            <div class="text6">后街</div>
+        </div>
+        <button id="spinBtn">戳这里</button>
+        <div class="name">Made by <span class="super-cool">公师</span></div>
+        <div class="version">V1.0.0 Alpha</div>
+    </div>
+    <!-- 自定义弹窗 -->
+    <div class="my-modal" id="myModal">
+        <div class="my-modal-box">
+        <!-- 这里就是左上角标题！想改什么直接写 -->
+        <div class="my-modal-title">哇！金色传说</div>
+        <div class="my-modal-content" id="modalText"></div>
+        <div class="my-modal-btn">
+            <button onclick="closeModal()">确定</button>
+        </div>
+    </div>
+</div>
+<script>
+    // 打开弹窗
+    function showModal(msg) {
+        document.getElementById('modalText').innerText = msg;
+        document.getElementById('myModal').style.display = 'flex';
+    }
+    // 关闭弹窗
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+    const wheel = document.querySelector('.wheel');
+    const btn = document.getElementById('spinBtn');
+    btn.onclick = function () {
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+        wheel.classList.remove("rotating");
+        void wheel.offsetWidth;
+        let randomDeg = 360 * 3 + Math.random() * 360;
+        wheel.style.setProperty("--rotate-degree",randomDeg + 'deg');
+        wheel.classList.add('rotating');
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            let finalDeg = randomDeg % 360;
+            let result;
+            if ((finalDeg >= 0 && finalDeg < 60) || (finalDeg >= 180 && finalDeg < 240)) {
+                result = "后街";
+            } else if ((finalDeg >= 60 && finalDeg < 120) || (finalDeg >= 240 && finalDeg < 300)) {
+                result = "博苑";
+            } else {
+                result = "翰苑";
+            }
+    showModal("今天吃：" + result);
+        }, 1200); // 3000 = 转动时间 3 秒
+    };
+</script>
+</body>
+</html>
