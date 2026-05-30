@@ -161,6 +161,10 @@
         .my-modal-btn {
             text-align: center;
             padding: 10px;
+            display: flex;                    /* 添加：使用弹性布局 */
+             flex-direction: column;          /* 添加：垂直排列 */
+            justify-content: center;          /* 添加：水平居中对齐 */
+            gap: 10px;                        /* 添加：按钮之间间距 */
         }
         .my-modal-btn button {
             padding: 6px 15px;
@@ -237,7 +241,7 @@
     <div class="wrap">
         <!-- 转盘名字 -->
         <div class="wheel-title">
-            <span class="rotate-q">？</span>
+            <span class="rotate-q">?</span>
             下一顿吃什么
             <span class="rotate-q">¿</span>
         </div>
@@ -254,7 +258,7 @@
         </div>
         <button id="spinBtn">戳这里</button>
         <div class="name">Made by <span class="super-cool">公师</span></div>
-        <div class="version">V1.0.0 Alpha</div>
+        <div class="version">V1.1.0 Alpha</div>
     </div>
     <!-- 自定义弹窗 -->
     <div class="my-modal" id="myModal">
@@ -263,7 +267,10 @@
         <div class="my-modal-title">哇！金色传说</div>
         <div class="my-modal-content" id="modalText"></div>
         <div class="my-modal-btn">
-            <button onclick="closeModal()">确定</button>
+            <button onclick="closeModal()">Let's go!!!</button>
+            <button id="reSpinBtn" onclick="spinAgain()" 
+                onmouseover="this.textContent='那就再摇一次！'" 
+                onmouseout="this.textContent='不喜欢？'">不喜欢？</button>
         </div>
     </div>
 </div>
@@ -276,6 +283,12 @@
     // 关闭弹窗
     function closeModal() {
         document.getElementById('myModal').style.display = 'none';
+    }
+    // 再次转转盘功能
+    function spinAgain() {
+        document.getElementById('myModal').style.display = 'none';  // 关闭弹窗
+        // 触发主转盘按钮的点击事件
+        document.getElementById('spinBtn').click();                // 重新触发转盘
     }
     const wheel = document.querySelector('.wheel');
     const btn = document.getElementById('spinBtn');
