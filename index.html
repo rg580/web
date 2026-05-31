@@ -11,12 +11,11 @@
             box-sizing: border-box;
         }
         body {
-            min-height: 100vh;     /* 占满视口高度 */
+            min-height: 100vh;      /* 占满视口高度 */
             display: flex;          /* 弹性布局 */
-            justify-content: center;/* 水平居中 */
+            flex-direction: column; /* 垂直排列 */
             align-items: center;    /* 垂直居中 */
-            /* 纯色背景 */
-            background: #fff;
+            background: #fff;     /* 纯色背景 */
         }
         @keyframes gradient {
             0% { background-position: 0% 50%; }
@@ -27,8 +26,14 @@
         .wrap {
             text-align: center;     /* 内部文字居中 */
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 内容在垂直方向居中 */
+            flex-grow: 1; /* 新增：让内容占满剩余高度 */
+            width: 100%;
+            padding: 20px;
         }
-
         /* 转盘名字（标题）样式 */
         .wheel-title {
             font-size: 28px;
@@ -212,7 +217,7 @@
         @keyframes spin3ThenScale {
             0%   { transform: rotate(0deg) scale(1); }
             80%  { transform: rotate(1080deg) scale(1); } /* 3圈=1080° */
-            100% { transform: rotate(1080deg) scale(1.3); } /* 最后放大 */
+            100% { transform: rotate(1080deg) scale(2); } /* 最后放大 */
         }
         /* 下面三个是原来的发光/变色/抖动，保留不动 */
         @keyframes coolShine {
@@ -233,6 +238,223 @@
             font-size: 13px;
             color: #aaa;
             letter-spacing: 1px;
+        }
+        /* 推荐栏样式 - 始终显示 */
+        .recommendation-bar {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            animation: fadeIn 0.6s ease-out;
+            width: 100%;
+            max-width: 900px; /* 限制最大宽度，保持居中 */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .recommendation-bar h3 {
+            text-align: center;
+            color: #e63946;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .recommendations {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .recommend-item {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .recommend-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .recommend-item h4 {
+            color: #e63946;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .recommend-item ul {
+            list-style: none;
+            padding: 0;
+        }
+        .recommend-item li {
+            padding: 6px 0;
+            color: #555;
+            border-bottom: 1px dashed #eee;
+            font-size: 14px;
+        }
+        .recommend-item li:last-child {
+            border-bottom: none;
+        }
+        /* 推荐详情弹窗样式 */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .detail-modal-box {
+            background: #fff;
+            width: 400px;
+            max-width: 90%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
+        }
+        .detail-modal-title {
+            background: #f8f9fa;
+            font-weight: bold;
+            padding: 15px;
+            font-size: 18px;
+            color: #333;
+            text-shadow: none;/* 移除阴影 */
+            text-align: left;/* 左对齐 */
+        }
+        .detail-modal-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .detail-modal-content ul {
+            list-style: none;
+            padding: 0;
+        }
+        .detail-modal-content li {
+            padding: 10px 0;
+            color: #555;
+            border-bottom: 1px dashed #eee;
+            font-size: 16px;
+        }
+        .detail-modal-content li:last-child {
+            border-bottom: none;
+        }
+        .detail-modal-btn {
+            text-align: center;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        .detail-modal-btn button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #e63946;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        /* 内测版本文字 */
+        .version {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #aaa;
+            letter-spacing: 1px;
+            /* 添加以下属性以支持过渡动画 */
+            transition: transform 0.2s ease, text-decoration 0.2s ease;
+            cursor: pointer; /* 改变光标形状提示可交互 */
+            display: inline-block; /* 确保它是可以应用 transform 的元素 */
+        }
+        /* 鼠标悬停时的样式 */
+        .version:hover {
+            transform: scale(1.1); /* 稍微放大 */
+            text-decoration: underline; /* 添加下划线 */
+            color: #888; /* 可选：改变悬停时的颜色，使其更明显 */
+        }
+        /* 底部文字样式 */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+        }
+        .footer .version {
+            margin-top: 8px; /* 版本号在公师下面，间距 8px */
+            font-size: 13px;
+            color: #aaa;
+            letter-spacing: 1px;
+            transition: transform 0.2s ease, text-decoration 0.2s ease;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .footer .version:hover {
+            transform: scale(1.1);
+            text-decoration: underline;
+            color: #888;
+        }
+        /* 版本信息弹窗样式 */
+        .version-modal {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10001; /* 比抽奖弹窗层级更高 */
+            justify-content: center;
+            align-items: center;
+        }
+        .version-modal-box {
+            background: #fff;
+            width: 400px;
+            max-width: 90%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
+        }
+        .version-modal-title {
+            background: #f8f9fa;
+            font-weight: bold;
+            padding: 15px;
+            font-size: 18px;
+            color: #333;
+            text-align: left;
+        }
+        .version-modal-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .version-modal-content pre {
+            font-family: inherit;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+        .version-modal-btn {
+            text-align: center;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        .version-modal-btn button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #e63946;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -257,27 +479,107 @@
             <div class="text6">后街</div>
         </div>
         <button id="spinBtn">戳这里</button>
-        <div class="name">Made by <span class="super-cool">公师</span></div>
-        <div class="version">V1.1.0 Alpha</div>
+        <!-- 推荐栏：始终显示 -->
+        <div class="recommendation-bar" id="recommendationBar">
+            <h3>推 荐</h3>
+            <div class="recommendations">
+                <div class="recommend-item">
+                    <h4>翰苑 <span style="font-size: 9px;">我就去过几次</span></h4>
+                    <ul>
+                        <li>待定</li>
+                        <li>待定</li>
+                        <li>待定</li>
+                    </ul>
+                </div>
+            <div class="recommend-item">
+                <h4>博苑 <span style="font-size: 9px;">就是面条多;-)</span></h4>
+                    <ul>
+                        <li>二楼 朱家面馆</li>
+                        <li>一楼 便宜实惠的面（忘记名字惹）</li>
+                        <li>一楼 另一家面馆（......）</li>
+                    </ul>
+                </div>
+            <div class="recommend-item">
+                <h4>后街</h4>
+                <ul>
+                    <li>陕北蒸饺</li>
+                    <li>肉夹馍（我忘记叫什么了只记得是肉夹馍）</li>
+                    <li>暂无</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <!-- 自定义弹窗 -->
+    <!-- 推荐详情弹窗 -->
+    <div class="detail-modal" id="detailModal">
+        <div class="detail-modal-box">
+            <div class="detail-modal-title" id="detailModalTitle"></div>
+            <div class="detail-modal-content" id="detailModalContent"></div>
+            <div class="detail-modal-btn">
+                <button onclick="closeDetailModal()">关闭</button>
+        </div>
+        </div>
+    </div>
     <div class="my-modal" id="myModal">
         <div class="my-modal-box">
         <!-- 这里就是左上角标题！想改什么直接写 -->
         <div class="my-modal-title">哇！金色传说</div>
         <div class="my-modal-content" id="modalText"></div>
         <div class="my-modal-btn">
-            <button onclick="closeModal()">Let's go!!!</button>
+            <button onclick="closeModalAndGo()">Let's go!!!</button>
             <button id="reSpinBtn" onclick="spinAgain()" 
                 onmouseover="this.textContent='那就再摇一次！'" 
                 onmouseout="this.textContent='不喜欢？'">不喜欢？</button>
         </div>
+        </div>
     </div>
-</div>
+    <!-- 底部：Made by + 版本号 -->
+    <div class="footer">
+        <div>Made by <span class="super-cool">公师</span></div>
+        <div class="version" onclick="openVersionModal();">V1.2.0 Alpha</div>
+    <!-- 版本信息弹窗（默认隐藏） -->
+    <div class="version-modal" id="versionModal">
+        <div class="version-modal-box">
+            <div class="version-modal-title">V1.2.0 Alpha</div>
+            <div class="version-modal-content">
+                <pre>
+V1.2.0 Alpha
+1.	添加推荐页面
+2.	抽完后可直接查看抽到的餐厅推荐
+3.	点击版本信息可查看当前版本更新内容
+3.5	加大作者名字炫酷程度！！！
+                </pre>
+            </div>
+            <div class="version-modal-btn">
+                <button onclick="closeVersionModal()">关闭</button>
+            </div>
+        </div>
+    </div>
 <script>
+    // 存储推荐数据
+    const recommendations = {
+        "翰苑": [
+            "待定",
+            "待定",
+            "待定"
+        ],
+        "博苑": [
+            "二楼 朱家面馆",
+            "一楼 便宜实惠的面（忘记名字惹）",
+            "一楼 另一家面馆（......）"
+        ],
+        "后街": [
+            "陕北蒸饺",
+            "肉夹馍（我忘记叫什么了只记得是肉夹馍）",
+            "暂无"
+        ]
+    };
+    // 当前抽中的结果
+    let currentResult = "";
     // 打开弹窗
     function showModal(msg) {
         document.getElementById('modalText').innerText = msg;
+        // 提取结果部分
+        currentResult = msg.replace("今天吃：", "");
         document.getElementById('myModal').style.display = 'flex';
     }
     // 关闭弹窗
@@ -315,6 +617,55 @@
     showModal("今天吃：" + result);
         }, 1200); // 3000 = 转动时间 3 秒
     };
+    // 关闭主弹窗并显示推荐详情
+    function closeModalAndGo() {
+        document.getElementById('myModal').style.display = 'none';
+        // 查找推荐栏中匹配的完整h4内容
+        const recommendationItems = document.querySelectorAll('.recommend-item');
+        let fullTitle = currentResult; // 默认为地点名称
+        for (let item of recommendationItems) {
+            const h4Text = item.querySelector('h4').textContent.trim();
+            // 检查是否以当前结果开头
+            if (h4Text.startsWith(currentResult)) {
+                fullTitle = h4Text; // 使用完整的h4文本
+                break; // 找到第一个匹配的就停止
+            }
+        }
+        // 设置详情弹窗内容
+        const titleElement = document.getElementById('detailModalTitle');
+        const contentElement = document.getElementById('detailModalContent');
+        titleElement.innerText = fullTitle;  // 使用查找到的完整标题
+        // 清空之前的内容
+        contentElement.innerHTML = '';
+        // 创建列表
+        const ul = document.createElement('ul');
+        if (recommendations[currentResult]) {
+            recommendations[currentResult].forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item;
+                ul.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.innerText = "暂无推荐";
+            ul.appendChild(li);
+        }
+        contentElement.appendChild(ul);
+        // 显示详情弹窗
+        document.getElementById('detailModal').style.display = 'flex';
+    }
+    // 关闭详情弹窗
+    function closeDetailModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+    // 打开版本信息弹窗
+    function openVersionModal() {
+        document.getElementById('versionModal').style.display = 'flex';
+    }
+    // 关闭版本信息弹窗
+    function closeVersionModal() {
+        document.getElementById('versionModal').style.display = 'none';
+    }
 </script>
 </body>
 </html>
