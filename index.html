@@ -79,6 +79,26 @@
             will-change: transform;
             position: relative;
         }
+        /* 转盘容器：专门用来定位指针，不旋转 */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        /* 指针：固定在容器顶部中心，不旋转！ */
+        .pointer {
+            position: absolute;
+            left: 50%;
+            top: -12px;           /* 贴在转盘正上方 */
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 28px solid #e63946;
+            z-index: 10;
+        }
         .wheel > div {
             position: absolute;
             width: 100%;
@@ -467,16 +487,18 @@
             下一顿吃什么
             <span class="rotate-q">¿</span>
         </div>
-        <!-- 新增：倒置红色指针 -->
-        <div class="pointer"></div>
-        <!-- 转盘 + 文字 -->
-        <div class="wheel">
-            <div class="text1">翰苑</div>
-            <div class="text2">博苑</div>
-            <div class="text3">后街</div>
-            <div class="text4">翰苑</div>
-            <div class="text5">博苑</div>
-            <div class="text6">后街</div>
+        <div class="wheel-container">
+            <!-- 倒置红色指针 -->
+            <div class="pointer"></div>
+            <!-- 转盘 + 文字 -->
+            <div class="wheel">
+                <div class="text1">翰苑</div>
+                <div class="text2">博苑</div>
+                <div class="text3">后街</div>
+                <div class="text4">翰苑</div>
+                <div class="text5">博苑</div>
+                <div class="text6">后街</div>
+            </div>
         </div>
         <button id="spinBtn">戳这里</button>
         <!-- 推荐栏：始终显示 -->
@@ -534,7 +556,7 @@
     </div>
     <!-- 底部：Made by + 版本号 -->
     <div class="footer">
-        <div>Made by <span class="super-cool">公师</span></div>
+        <div>Made by <span class="super-cool">公 师</span></div>
         <div class="version" onclick="openVersionModal();">V1.2.0 Alpha</div>
     <!-- 版本信息弹窗（默认隐藏） -->
     <div class="version-modal" id="versionModal">
@@ -542,11 +564,9 @@
             <div class="version-modal-title">V1.2.0 Alpha</div>
             <div class="version-modal-content">
                 <pre>
-V1.2.0 Alpha
-1.	添加推荐页面
-2.	抽完后可直接查看抽到的餐厅推荐
-3.	点击版本信息可查看当前版本更新内容
-3.5	加大作者名字炫酷程度！！！
+V1.2.1 Alpha
+1.  修复指针位置异常问题
+1.5 作者！名字！炫酷！！！
                 </pre>
             </div>
             <div class="version-modal-btn">
